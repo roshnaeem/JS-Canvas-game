@@ -4,7 +4,7 @@
         <style>
             #canvas {
             border: 1px solid brown;
-             background-image: url("bg.jpeg");
+             background-image: url("bg.jpg");
              background-size: 600px 500px;
             
           }
@@ -187,7 +187,7 @@
             y:360,
             w:500,
             h:40,
-            c:"blue",
+            c:"#212F3C",
             groundCollision:false
         }
 
@@ -196,7 +196,7 @@
             y:320,
             w:450,
             h:80,
-            c:"blue",
+            c:"#212F3C",
             groundCollision:false
         }
         // set init
@@ -256,8 +256,8 @@
             ctx.beginPath();
             var grd = ctx.createRadialGradient(75, 50, 50, 90, 60, 100);
             grd.addColorStop(0, "red");
-            grd.addColorStop(1, "purple");
-            ctx.fillStyle = "purple";
+            grd.addColorStop(1, "#A04000");
+            ctx.fillStyle = "#7B241C";
             ctx.fillRect(this.x, this.y, this.w, this.h);
               ctx.closePath();
         }
@@ -309,15 +309,15 @@
         drawBox(x, y, 37.5 * count, 20, 'green');
         drawBox(object.x,object.y,object.w,object.h,object.c);
         drawBox(object1.x,object1.y,object1.w,object1.h,object1.c);
-        obs3=new component(400,40,"blue", 200,280);
-        obsair1=new component(50,30, "blue",480, 200);
-          obsair2=new component(50,30, "blue",400, 160);
-          obsair3a=new component(50,30, "blue",320,120);
-          obsair3b=new component(70,40, "black",540,120);
-          obsair3c=new component(50,30, "blue",120,150);
-          obsair4=new component(50,30, "blue",210, 90);
-          obsair5 = new component(50,30, "blue",60,100);
-          door = new doorcomponent(60,60, "brown",0,40); 
+        obs3=new component(400,40,"#212F3C", 200,280);
+        obsair1=new component(50,30, "#212F3C",480, 200);
+          obsair2=new component(50,30, "#212F3C",400, 160);
+          obsair3a=new component(50,30, "#212F3C",320,120);
+          obsair3b=new component(70,40, "#212F3C",540,120);
+          obsair3c=new component(50,30, "#212F3C",120,150);
+          obsair4=new component(50,30, "#212F3C",210, 90);
+          obsair5 = new component(50,30, "#212F3C",60,100);
+          door = new doorcomponent(60,60, "#CA6F1E",0,40); 
           key = new keycomponent(15,15,560,90);
           ramp= new component(60,10,"#5BB2CE",0,100);
           worm= new component(40,20,"red", 290,260);
@@ -341,6 +341,7 @@
           ctx.fillText("level 1", 200, 50,200);
           ctx.fillText("Start", 10, 350,200);
           ctx.fillText("End", 10, 35,200);
+          ctx.fillText("key", 555, 77 , 200)
 
           ctx.font = "15px Georgia";
           ctx.fillText("virus",295,255);
