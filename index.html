@@ -1,0 +1,372 @@
+<html>
+    <head>
+        <title>A Javascript Game</title>
+        <style>
+            #canvas {
+            border: 1px solid brown;
+             background-image: url("bg.jpeg");
+             background-size: 600px 500px;
+            
+          }
+        </style>
+    </head>
+
+    <bodeltaY>
+            <canvas id='canvas' width="600px" height="500px"></canvas>
+    </bodeltaY>
+
+    <script>
+        var ctx = canvas.getContext('2d');
+        
+
+        const keyboardController = (() => {
+          document.addEventListener("keydown", inputEvent);
+          document.addEventListener("keyup", inputEvent);
+          const keyboardController = {
+            right: false,
+            left: false,
+            up: false,
+            any : false,
+          };
+
+        function inputEvent(event) {
+        const status = event.type === "keydown"
+            if (event.keyCode == 39) // up controller
+            {
+              keyboardController.right = status;
+            } else if (event.keyCode == 37) { // right controller
+              keyboardController.left = status;
+            } else if (event.keyCode == 38) { //left controller
+              keyboardController.up = status;
+              event.preventDefault(); // to prevent the default functionality of event
+            }
+            if(status) { keyboardController.any = true } // must reset when used
+          }
+          return keyboardController;
+        })();
+
+
+        const character = {
+          x: 0,
+          y: 0,
+          deltaX: 0, 
+          deltaY: 0,
+          size: 20,
+          color: 'lime',
+          groundCollision: false,
+          jump: -5.8,  // you can change this value to control the jump power
+          acceleration: 2,
+          rflag:1,lflag:1,uflag:1,dflag:1,
+
+          collision(obj){
+              
+              
+              if((this.y > obj.y+3 && this.y < obj.y + obj.h - 3) || (this.y + this.size > obj.y + 3 && this.y + this.size < obj.y + obj.h - 3))
+              {
+                // right collision
+                if((Math.floor(this.x) <= obj.x + obj.w) && (Math.floor(this.x) >= obj.x + obj.w - 5))
+                {
+                  console.log("rigth collison");
+                  this.rflag = 0;
+                  this.deltaX = 0;
+                }
+                
+                // left collison
+                if((Math.floor(this.x + this.size) >= obj.x) && (Math.floor(this.x + this.size) <= obj.x + 5))
+                {
+                  console.log("left collison");
+                  this.lflag = 0;
+                  this.deltaX = 0;
+                }
+                
+                
+              }
+
+              if((this.x > obj.x + 3 && this.x < obj.x + obj.w - 3) || (this.x + this.size > obj.x + 3 && this.x + this.size < obj.x + obj.w - 3))
+              {
+                // downward collision
+                if((Math.floor(this.y) <= obj.y + obj.h) && (Math.floor(this.y) >= obj.y + obj.h - 5))
+                {
+                  console.log("down collison");
+                  this.deltaY = -this.deltaY;
+                }
+                
+                //upward collision
+                if((Math.floor(this.y + this.size) >= obj.y) && (Math.floor(this.y + this.size) <= obj.y + 5))
+                {
+                  console.log("upward collison");
+                  this.y = obj.y - this.size;
+                  this.deltaY = 0;
+                  this.groundCollision = true;
+                }
+        
+              }
+          },
+          // this will calculate the  characters new positions
+          update() {
+
+            
+            if (keyboardController.up && this.groundCollision) { this.deltaY = this.jump; }
+            if (keyboardController.left && this.rflag) { this.deltaX = -this.acceleration;this.lflag = 1; }
+            if (keyboardController.right && this.lflag) { this.deltaX = this.acceleration;this.rflag=1; }
+        
+            // the code is here to provide gravity effect
+            this.deltaY += model.gravity;
+            this.deltaY *= model.force;
+            this.deltaX *= this.groundCollision ? model.groundforce : model.force;
+            this.x += this.deltaX;
+            this.y += this.deltaY;
+            this.lflag = 1;this.rflag = 1;
+            // test ground contact and left and right limits
+            //console.log(this.deltaX);
+            if(this.x>=580){
+              this.x=580;
+            }
+            else if(this.x<=0){
+              this.x=0;
+            }
+            else if(this.y<=0){
+              this.y=0;
+            }
+            else if(this.x<=0 && this.y<=0){
+              this.x=0;
+              this.y=0;
+            }
+            else if(this.y>=260 && this.x>=200){
+              this.y=260;
+            }
+            //next level
+            if(this.x == 0 && (this.y >= door.y && this.y <= ((door.y+door.h) ) ) ){
+              
+              window.location.replace("index2.html");
+            }
+
+            //getting killed by worm
+
+            if((this.x+this.size>=worm.x && this.x <= worm.x+ worm.w) && (this.y + this.size>= worm.y ) ){
+               this.x=20;
+              this.y=480;
+            }
+
+            if (this.y + this.size >= model.ground) {
+              this.y = model.ground - this.size;
+              this.deltaY = 0;
+              this.groundCollision = true;
+            } else {
+              this.groundCollision = false;
+            }
+            if (this.x > ctx.canvas.width) {
+              this.x -= ctx.canvas.width;
+
+            } else if (this.x + this.size < 0) {
+              this.x += ctx.canvas.width;
+            }
+
+          },
+          draw() {
+            drawBox(this.x, this.y, this.size, this.size, this.color);
+          },
+          init() {
+            this.x = 10;
+            this.y = model.ground - this.size;
+            this.groundCollision = true;
+            this.deltaX = 0;
+            this.deltaY = 0;
+          }
+        }
+        // define model
+        const model = {
+          gravity: 0.2, 
+          force: 0.999, 
+          groundforce: 0.9, 
+          ground: 400,
+        }
+
+        const object = {
+            x:100,
+            y:360,
+            w:500,
+            h:40,
+            c:"blue",
+            groundCollision:false
+        }
+
+        const object1 = {
+            x:150,
+            y:320,
+            w:450,
+            h:80,
+            c:"blue",
+            groundCollision:false
+        }
+        // set init
+        character.init();
+        // call first frame. This will run after all the rest of the code has run
+        requestAnimationFrame(mainLoop); // init when readeltaY
+
+        // function to draw rectangle
+        function drawBox(x, y, width, height, color) {
+          ctx.beginPath();
+          ctx.rect(x, y, width, height);
+          ctx.fillStyle = color;
+          ctx.fill();
+          ctx.closePath();
+        }
+
+        function component(w,h,color,x,y,groundCollision){
+        
+        this.w=w;
+        this.h=h;
+        this.x=x;
+        this.y=y;
+        this.speedeltaX=0;
+        this.speedeltaY=0;
+        this.groundCollision=groundCollision;
+        
+        this.update= function(){
+        ctx.beginPath();
+        ctx.fillStyle=color;
+        
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.closePath();
+        }
+
+        }
+
+        count=0;
+        doorpermission=0;
+
+        function keycomponent(w,h,x,y,groundCollision){
+        
+        this.w=w;
+        this.h=h;
+        this.x=x;
+        this.y=y;
+        this.speedeltaX=0;
+        this.speedeltaY=0;
+        this.groundCollision=groundCollision;
+        
+        if(this.x<=character.x+character.size && this.y+ this.h >= character.y){
+          count=1;
+          doorpermission=1;
+        }
+        
+        this.update= function(){
+        if(count==0){
+            ctx.beginPath();
+            var grd = ctx.createRadialGradient(75, 50, 50, 90, 60, 100);
+            grd.addColorStop(0, "red");
+            grd.addColorStop(1, "purple");
+            ctx.fillStyle = "purple";
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+              ctx.closePath();
+        }
+          }
+        }
+
+      
+        //function to draw door component that will act as home
+        function doorcomponent(w,h,color,x,y,groundCollision){
+        
+        this.w=w;
+        this.h=h;
+        this.x=x;
+        this.y=y;
+        this.speedeltaX=0;
+        this.speedeltaY=0;
+        this.groundCollision=groundCollision;
+
+        this.update= function(){
+          
+
+        ctx.beginPath();
+        ctx.fillStyle=color;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.closePath();
+        if(doorpermission==0){
+          
+        character.collision(door);
+        ctx.beginPath();
+        ctx.fillStyle="black";
+        ctx.arc(50, 70,5, 10, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.closePath();
+
+        }
+        if(doorpermission==1){
+          character.collision(ramp);
+        
+          }
+        }
+          
+        }
+
+
+
+        //draw all the objects inside of canvas 
+        function drawGround(x, y, count = 1) {
+        drawBox(x, y, 37.5 * count, 150, '#684027');
+        drawBox(x, y, 37.5 * count, 20, 'green');
+        drawBox(object.x,object.y,object.w,object.h,object.c);
+        drawBox(object1.x,object1.y,object1.w,object1.h,object1.c);
+        obs3=new component(400,40,"blue", 200,280);
+        obsair1=new component(50,30, "blue",480, 200);
+          obsair2=new component(50,30, "blue",400, 160);
+          obsair3a=new component(50,30, "blue",320,120);
+          obsair3b=new component(70,40, "black",540,120);
+          obsair3c=new component(50,30, "blue",120,150);
+          obsair4=new component(50,30, "blue",210, 90);
+          obsair5 = new component(50,30, "blue",60,100);
+          door = new doorcomponent(60,60, "brown",0,40); 
+          key = new keycomponent(15,15,560,90);
+          ramp= new component(60,10,"#5BB2CE",0,100);
+          worm= new component(40,20,"red", 290,260);
+          house = new component(50,40,"#CD5C5C",5,360);
+
+          obs3.update();
+          obsair1.update(); obsair2.update(); obsair4.update(); obsair5.update();
+          obsair3a.update();  obsair3b.update();  obsair3c.update();
+          door.update();  key.update(); ramp.update(); worm.update();
+          house.update();
+          
+          
+
+        }
+       
+        // main animation loop
+        function mainLoop(time) { // time passed by requestAnimationFrame        
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle="black";
+          ctx.font = "20px Georgia";
+          ctx.fillText("level 1", 200, 50,200);
+          ctx.fillText("Start", 10, 350,200);
+          ctx.fillText("End", 10, 35,200);
+
+          ctx.font = "15px Georgia";
+          ctx.fillText("virus",295,255);
+          drawGround(0, model.ground, 16);
+          character.update();
+          
+          character.collision(object1);
+          character.collision(object);
+          character.collision(obs3);
+          character.collision(obsair1);
+          character.collision(obsair2);
+          character.collision(obsair3a);
+          character.collision(obsair3b);
+          character.collision(obsair3c);
+          character.collision(obsair4);
+          character.collision(obsair5);
+          character.collision(worm);
+          
+          character.draw();
+          
+          requestAnimationFrame(mainLoop);
+        }
+
+        // make sure window has focus for keyboardController input.
+        window.focus();
+</script>
+
+    
+</html>
