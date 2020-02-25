@@ -1,6 +1,6 @@
 # Spooky-Canvas
 <img src="Spooky-Canvas.gif" >
-Make your way through a spooky canvas to home. Avoid virus and collect key thorugh jumping to get to home. 
+Make your way through a spooky canvas to home. Avoid virus and collect key through jumping to get to home. 
 
 # Getting Started
 Clone the repository and open index.html
