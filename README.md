@@ -1,5 +1,5 @@
 # Spooky-Canvas
-<img src="Game.JPG" height = "500">
+<img src="Spooky-Canvas.gif" >
 Make your way through a spooky canvas to home. Avoid virus and collect key thorugh jumping to get to home. 
 
 # Getting Started
