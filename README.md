@@ -1,4 +1,4 @@
-# Spooky-Canvas
+# JS-Canvas game
 <img src="Spooky-Canvas.gif" >
 Make your way through a spooky canvas to home. Avoid virus and collect key through jumping to get to home. 
 
